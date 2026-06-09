@@ -376,6 +376,16 @@ canvas.chart{width:100%;border-radius:8px}
   color:var(--dark);padding:11px 14px;border-radius:12px;font-size:.88rem;
   font-family:'Poppins',sans-serif;appearance:none;transition:border-color .2s}
 .mf select:focus{outline:none;border-color:var(--green)}
+/* DAYS OF WEEK SELECTOR */
+.dow-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.dow-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);
+  background:var(--bg);color:var(--muted);font-size:.7rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:'Poppins',sans-serif;transition:all .15s;flex-shrink:0}
+.dow-btn.sel{background:var(--green);border-color:var(--green);color:#fff}
+.hr-sched{font-size:.62rem;color:var(--green);font-weight:600}
+.habit-row.off-day{opacity:.45}
+.habit-row.off-day .hr-name{text-decoration:none}
 </style>
 </head>
 <body>
@@ -412,6 +422,9 @@ canvas.chart{width:100%;border-radius:8px}
       <input type="number" id="ahDur" value="30" min="1" max="480"/></div>
     <div class="mf"><label>Dias por semana (1–7)</label>
       <input type="number" id="ahDays" value="3" min="1" max="7"/></div>
+    <div class="mf"><label>Dias da semana</label>
+      <div class="dow-row" id="ahDowRow"></div>
+      <div style="font-size:.67rem;color:var(--muted);margin-top:5px">Sem seleção = todos os dias</div></div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
       <button class="btn-save-m" onclick="saveNewHabit()">Adicionar</button>
@@ -671,6 +684,29 @@ const AREAS = [
 const ALL = AREAS.flatMap(a=>a.habits);
 function getCustom(data){return data.custom||[]}
 function getAllH(data){return [...ALL,...getCustom(data)]}
+const DOW_NAMES=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+function todayDow(){return new Date().getDay()}
+function isScheduledToday(id,data){
+  const sched=(data.schedule||{})[id];
+  if(!sched||sched.length===0)return true; // sem restrição = todos os dias
+  return sched.includes(todayDow());
+}
+function getTodayHabits(data){return getAllH(data).filter(h=>isScheduledToday(h.id,data))}
+function renderDowBtns(containerId,selectedDays){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  DOW_NAMES.forEach((n,i)=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='dow-btn'+(selectedDays.includes(i)?' sel':'');
+    b.textContent=n;
+    b.onclick=()=>{b.classList.toggle('sel')};
+    c.appendChild(b);
+  });
+}
+function getSelectedDow(containerId){
+  const c=document.getElementById(containerId);if(!c)return[];
+  return [...c.querySelectorAll('.dow-btn.sel')].map(b=>DOW_NAMES.indexOf(b.textContent));
+}
 const WATER_GOAL = 2000;
 const EX_SUGS=['Caminhada','Corrida','Musculação','Yoga','Pilates','Ciclismo','Natação','HIIT','Funcional','Crossfit','Dança'];
 
@@ -731,6 +767,7 @@ const S={
     if(d.userName===undefined)d.userName='';
     if(!d.custom)d.custom=[];
     if(!d.daysPerWeek)d.daysPerWeek={};
+    if(!d.schedule)d.schedule={};
     this.s(d);return d;
   }
 };
@@ -766,7 +803,9 @@ function openEditModal(id){
   document.getElementById('modalTitle').textContent=`Editar — ${curName}`;
   let chips=id==='exercicio'?`<div class="chips">${EX_SUGS.map(s=>`<span class="chip" onclick="pickChip('${s}')">${s}</span>`).join('')}</div>`:'';
   let durF=(h?.dur!==null&&h?.dur!==undefined)||isCustom?`<div class="mf"><label>Duração (minutos)</label><input type="number" id="mDur" value="${curDur}" min="1" max="480"/></div>`:'';
+  const curSched=(data.schedule||{})[id]||[];
   let daysF=`<div class="mf"><label>Dias por semana (1–7)</label><input type="number" id="mDays" value="${curDays}" min="1" max="7" placeholder="Ex: 5"/></div>`;
+  let schedF=`<div class="mf"><label>Dias da semana</label><div class="dow-row" id="mDowRow"></div><div style="font-size:.67rem;color:var(--muted);margin-top:5px">Sem seleção = todos os dias</div></div>`;
   let deleteBtn=isCustom?`<button class="btn-delete-habit" onclick="deleteCustomHabit('${id}')">Excluir este hábito</button>`:'';
   document.getElementById('modalBody').innerHTML=`
     <div class="mf"><label>Nome do hábito</label>
@@ -774,24 +813,26 @@ function openEditModal(id){
       ${chips}</div>
     <div class="mf"><label>Horário do lembrete</label>
       <input type="time" id="mTime" value="${curTime}"/></div>
-    ${durF}${daysF}${deleteBtn}`;
+    ${durF}${daysF}${schedF}${deleteBtn}`;
   document.getElementById('editModal').classList.add('open');
-  setTimeout(()=>document.getElementById('mName')?.focus(),300);
+  setTimeout(()=>{document.getElementById('mName')?.focus();renderDowBtns('mDowRow',curSched);},300);
 }
 function pickChip(v){const i=document.getElementById('mName');if(i)i.value=v}
 function closeModal(){document.getElementById('editModal').classList.remove('open');_mid=null}
 function saveModal(){
   if(!_mid)return;
   const data=S.g();
-  if(!data.names)data.names={};if(!data.times)data.times={};if(!data.durs)data.durs={};if(!data.daysPerWeek)data.daysPerWeek={};
+  if(!data.names)data.names={};if(!data.times)data.times={};if(!data.durs)data.durs={};if(!data.daysPerWeek)data.daysPerWeek={};if(!data.schedule)data.schedule={};
   const nm=document.getElementById('mName')?.value.trim();
   const tm=document.getElementById('mTime')?.value;
   const dr=document.getElementById('mDur')?.value;
   const dy=document.getElementById('mDays')?.value;
+  const dow=getSelectedDow('mDowRow');
   if(nm)data.names[_mid]=nm;
   if(tm)data.times[_mid]=tm;
   if(dr&&parseInt(dr)>0)data.durs[_mid]=parseInt(dr);
   if(dy&&parseInt(dy)>=1&&parseInt(dy)<=7)data.daysPerWeek[_mid]=parseInt(dy);
+  data.schedule[_mid]=dow;
   S.s(data);closeModal();showToast(`✓ Salvo com sucesso`);scheduleNotifs(data);render();
 }
 
@@ -802,7 +843,7 @@ function openAddHabitModal(areaId){
   document.getElementById('ahDur').value='30';
   document.getElementById('ahDays').value='3';
   document.getElementById('addHabitModal').classList.add('open');
-  setTimeout(()=>document.getElementById('ahName')?.focus(),300);
+  setTimeout(()=>{document.getElementById('ahName')?.focus();renderDowBtns('ahDowRow',[]);},300);
 }
 function closeAddModal(){document.getElementById('addHabitModal').classList.remove('open')}
 function saveNewHabit(){
@@ -812,10 +853,11 @@ function saveNewHabit(){
   const time=document.getElementById('ahTime')?.value||'08:00';
   const dur=parseInt(document.getElementById('ahDur')?.value)||30;
   const days=Math.min(7,Math.max(1,parseInt(document.getElementById('ahDays')?.value)||3));
+  const dow=getSelectedDow('ahDowRow');
   const id='c_'+Date.now();
   const data=S.init();
   data.custom.push({id,name,areaId,time,dur,daysPerWeek:days});
-  data.times[id]=time;data.durs[id]=dur;data.daysPerWeek[id]=days;
+  data.times[id]=time;data.durs[id]=dur;data.daysPerWeek[id]=days;data.schedule[id]=dow;
   S.s(data);closeAddModal();showToast(`"${name}" adicionado!`);render();
 }
 function deleteCustomHabit(id){
@@ -900,7 +942,7 @@ function toggleHabit(id){
 }
 
 function calcStreak(data){
-  const today=todayKey(),yest=dBefore(1),n=getAllH(data).length;
+  const today=todayKey(),yest=dBefore(1),n=getTodayHabits(data).length;
   const tp=data.hist[today]&&Object.values(data.hist[today]).filter(Boolean).length===n;
   if(tp){
     if(data.lastP===yest)data.streak=(data.streak||0)+1;
@@ -915,8 +957,9 @@ function render(){
   const data=S.init();const today=todayKey();
   if(!data.hist[today])data.hist[today]={};
   const done=data.hist[today];
-  const total=getAllH(data).length;
-  const doneCount=Object.values(done).filter(Boolean).length;
+  const todayH=getTodayHabits(data);
+  const total=todayH.length;
+  const doneCount=todayH.filter(h=>!!done[h.id]).length;
   const pct=Math.round(doneCount/total*100);
   calcStreak(data);
 
@@ -1020,9 +1063,10 @@ function renderHabits(data,done){
   ab.innerHTML='';
   const today=todayKey();
   const waterMl=(data.water[today]||0);
-  const doneCount=Object.values(done).filter(Boolean).length;
+  const todayHabits=getTodayHabits(data);
+  const doneCount=todayHabits.filter(h=>!!done[h.id]).length;
   const sub=document.getElementById('habSubtitle');
-  if(sub)sub.textContent=`${doneCount}/${getAllH(data).length} hábitos concluídos hoje`;
+  if(sub)sub.textContent=`${doneCount}/${todayHabits.length} hábitos para hoje`;
 
   AREAS.forEach(area=>{
     const ac=area.habits.filter(h=>done[h.id]).length;
@@ -1070,13 +1114,16 @@ function renderHabits(data,done){
       }
 
       const isDone=!!done[h.id];
+      const isToday=isScheduledToday(h.id,data);
       const streak=(data.stats.hs||{})[h.id]||0;
       const time=data.times[h.id]||h.time;
       const dur=(data.durs||{})[h.id]||h.dur;
       const days=(data.daysPerWeek||{})[h.id]||'';
+      const sched=(data.schedule||{})[h.id]||[];
+      const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
       const name=hName(h.id,data);
       const row=document.createElement('div');
-      row.className='habit-row'+(isDone?' done':'');
+      row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
       row.innerHTML=`
         <div class="hr-ico" style="background:${area.bg};color:${area.color}">${h.icon}</div>
         <div class="hr-info">
@@ -1085,27 +1132,31 @@ function renderHabits(data,done){
             ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
             <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
             ${days?`<span class="hr-days">${days}x/sem</span>`:''}
+            ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
             <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${h.id}')">
               <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Editar
             </button>
           </div>
         </div>
-        <div class="hr-ck">${isDone?'✓':''}</div>`;
-      row.addEventListener('click',()=>toggleHabit(h.id));
+        <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
+      row.addEventListener('click',()=>{if(isToday)toggleHabit(h.id);else showToast('Não agendado para hoje')});
       block.appendChild(row);
     });
 
     // Hábitos personalizados desta área
     getCustom(data).filter(c=>c.areaId===area.id).forEach(c=>{
       const isDone=!!done[c.id];
+      const isToday=isScheduledToday(c.id,data);
       const streak=(data.stats.hs||{})[c.id]||0;
       const time=(data.times||{})[c.id]||c.time;
       const dur=(data.durs||{})[c.id]||c.dur;
       const days=(data.daysPerWeek||{})[c.id]||c.daysPerWeek||'';
+      const sched=(data.schedule||{})[c.id]||[];
+      const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
       const name=hName(c.id,data);
       const row=document.createElement('div');
-      row.className='habit-row'+(isDone?' done':'');
+      row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
       row.innerHTML=`
         <div class="hr-ico" style="background:${area.bg};color:${area.color}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
@@ -1116,14 +1167,15 @@ function renderHabits(data,done){
             ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
             <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
             ${days?`<span class="hr-days">${days}x/sem</span>`:''}
+            ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
             <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${c.id}')">
               <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Editar
             </button>
           </div>
         </div>
-        <div class="hr-ck">${isDone?'✓':''}</div>`;
-      row.addEventListener('click',()=>toggleHabit(c.id));
+        <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
+      row.addEventListener('click',()=>{if(isToday)toggleHabit(c.id);else showToast('Não agendado para hoje')});
       block.appendChild(row);
     });
 
