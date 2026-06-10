@@ -1013,46 +1013,68 @@ function deleteDefaultHabit(id){
   S.s(data);closeModal();showToast('Hábito removido');render();
 }
 
-function openAlertModal(){
-  const data=S.init();const today=todayKey();
-  const done=data.hist[today]||{};
-  const pending=getTodayHabits(data).filter(h=>h.id!=='agua'&&!done[h.id]);
-  const waterMl=data.water[today]||0;
-  const waterDone=waterMl>=WATER_GOAL;
-  const allPending=waterDone?pending:
-    [...pending,{id:'agua',name:hName('agua',data),time:data.times['agua']||'08:00',_isWater:true,waterMl}];
-
-  const list=document.getElementById('alertList');
-  if(allPending.length===0){
-    document.getElementById('alertTitle').textContent='Tudo concluído! 🎉';
-    document.getElementById('alertSub').textContent='Você completou todos os hábitos de hoje';
-    list.innerHTML=`<div class="alert-all-done">
-      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <p>Dia perfeito!</p><span>Continue assim amanhã também</span>
-    </div>`;
-  } else {
-    document.getElementById('alertTitle').textContent=`${allPending.length} hábito${allPending.length>1?'s':''} pendente${allPending.length>1?'s':''}`;
-    document.getElementById('alertSub').textContent='Complete hoje para manter sua sequência';
-    const area=id=>AREAS.find(a=>getAllH(data).find(h=>h.id===id)&&a.habits.find(h=>h.id===id))||
-      AREAS.find(a=>(data.custom||[]).find(c=>c.id===id&&c.areaId===a.id))||AREAS[0];
-    list.innerHTML=`<div class="alert-list">${allPending.map(h=>{
-      const a=area(h.id);
-      const isW=h.id==='agua';
-      return `<div class="alert-item">
-        <div class="alert-item-ico" style="background:${a?.bg||'#D6EBC5'};color:${a?.color||'#3A7D44'}">
-          ${isW?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6 9 4 13 4 16a8 8 0 0 0 16 0c0-3-2-7-8-14z"/></svg>`:
-          (ALL.find(x=>x.id===h.id)||{icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>`}).icon}
-        </div>
-        <div class="alert-item-info">
-          <div class="alert-item-name">${hName(h.id,data)}</div>
-          <div class="alert-item-time">${isW?`${waterMl}ml de ${WATER_GOAL}ml`:`⏰ ${(data.times||{})[h.id]||h.time||'--:--'}`}</div>
-        </div>
-      </div>`;
-    }).join('')}</div>`;
-  }
-  document.getElementById('alertModal').classList.add('open');
+function getAreaOf(id,data){
+  for(const a of AREAS){if(a.habits.some(h=>h.id===id))return a;}
+  const c=(data.custom||[]).find(x=>x.id===id);
+  if(c)return AREAS.find(a=>a.id===c.areaId)||AREAS[0];
+  return AREAS[0];
 }
-function closeAlertModal(){document.getElementById('alertModal').classList.remove('open')}
+
+function openAlertModal(){
+  try{
+    const data=S.init();
+    const today=todayKey();
+    const done=data.hist[today]||{};
+    const waterMl=data.water[today]||0;
+    const todayH=getTodayHabits(data);
+
+    // pending: hábitos de hoje não concluídos
+    const pending=todayH.filter(h=>{
+      if(h.id==='agua')return waterMl<WATER_GOAL;
+      return !done[h.id];
+    });
+
+    const titleEl=document.getElementById('alertTitle');
+    const subEl=document.getElementById('alertSub');
+    const listEl=document.getElementById('alertList');
+
+    if(pending.length===0){
+      titleEl.textContent='Tudo concluído! 🎉';
+      subEl.textContent='Você completou todos os hábitos de hoje';
+      listEl.innerHTML=`<div class="alert-all-done">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <p>Dia perfeito!</p><span>Continue assim amanhã também</span>
+      </div>`;
+    } else {
+      const n=pending.length;
+      titleEl.textContent=n+' hábito'+(n>1?'s':'')+' pendente'+(n>1?'s':'');
+      subEl.textContent='Complete hoje para manter sua sequência';
+
+      const GENERIC_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`;
+      const WATER_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6 9 4 13 4 16a8 8 0 0 0 16 0c0-3-2-7-8-14z"/></svg>`;
+
+      let html='<div class="alert-list">';
+      for(const h of pending){
+        const a=getAreaOf(h.id,data);
+        const isW=h.id==='agua';
+        const defaultH=ALL.find(x=>x.id===h.id);
+        const icon=isW?WATER_ICON:(defaultH?defaultH.icon:GENERIC_ICON);
+        const time=isW?(waterMl+'ml de '+WATER_GOAL+'ml'):'⏰ '+((data.times||{})[h.id]||h.time||'');
+        html+=`<div class="alert-item">
+          <div class="alert-item-ico" style="background:${a.bg};color:${a.color}">${icon}</div>
+          <div class="alert-item-info">
+            <div class="alert-item-name">${hName(h.id,data)}</div>
+            <div class="alert-item-time">${time}</div>
+          </div>
+        </div>`;
+      }
+      html+='</div>';
+      listEl.innerHTML=html;
+    }
+    document.getElementById('alertModal').classList.add('open');
+  }catch(e){console.error('alertModal error',e);showToast('Erro ao abrir alerta');}
+}
+function closeAlertModal(){document.getElementById('alertModal').classList.remove('open');}
 
 function uploadAvatar(e){
   const file=e.target.files[0];if(!file)return;
