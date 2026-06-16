@@ -467,6 +467,96 @@ canvas.chart{width:100%;border-radius:8px}
 .hr-sched{font-size:.62rem;color:var(--green);font-weight:600}
 .habit-row.off-day{opacity:.45}
 .habit-row.off-day .hr-name{text-decoration:none}
+
+/* ══ AUTH OVERLAY ══ */
+#authOverlay{position:fixed;inset:0;background:linear-gradient(160deg,#1C3829 0%,#2D5C3A 50%,#1C3829 100%);
+  z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;overflow-y:auto;min-height:100vh}
+#authOverlay.hidden{display:none}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.auth-logo-text{font-size:1.5rem;font-weight:700;color:#fff;letter-spacing:.5px}
+.auth-logo-text em{color:var(--light);font-style:normal;font-weight:300}
+.auth-tagline{color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:28px;text-align:center}
+.auth-card{background:#fff;border-radius:24px;padding:28px 24px 24px;width:100%;max-width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.auth-title{font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:4px}
+.auth-sub{font-size:.78rem;color:var(--muted);margin-bottom:20px}
+.auth-field{margin-bottom:13px}
+.auth-field label{display:block;font-size:.7rem;color:var(--muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.auth-field input{width:100%;background:var(--bg);border:1.5px solid var(--border);
+  color:var(--dark);padding:11px 14px;border-radius:12px;font-size:.88rem;
+  font-family:'Poppins',sans-serif;transition:border-color .2s}
+.auth-field input:focus{outline:none;border-color:var(--green)}
+.btn-auth{width:100%;background:var(--green);color:#fff;border:none;padding:13px;
+  border-radius:12px;font-size:.9rem;font-weight:700;font-family:'Poppins',sans-serif;
+  cursor:pointer;margin-top:4px;transition:background .2s}
+.btn-auth:hover{background:var(--dark)}
+.auth-switch{text-align:center;margin-top:14px;font-size:.78rem;color:var(--muted)}
+.auth-switch a{color:var(--green);font-weight:600;cursor:pointer;text-decoration:none}
+.auth-err{background:#FFF0F0;color:var(--red);border:1px solid #FFCCCC;
+  border-radius:10px;padding:10px 14px;font-size:.78rem;margin-bottom:12px;display:none}
+.auth-err.show{display:block}
+
+/* ══ ADMIN PANEL ══ */
+.btn-admin-panel{display:flex;align-items:center;gap:9px;margin:0 14px 10px;
+  background:linear-gradient(90deg,#1C3829,#2D5C3A);border:none;color:#fff;
+  padding:13px 16px;border-radius:13px;cursor:pointer;font-size:.82rem;font-weight:600;
+  font-family:'Poppins',sans-serif;width:calc(100% - 28px);transition:opacity .2s}
+.btn-admin-panel:hover{opacity:.85}
+.btn-admin-panel svg{width:18px;height:18px;stroke:#8DC26A;fill:none;stroke-width:2;flex-shrink:0}
+.btn-logout{display:block;width:calc(100% - 28px);margin:0 14px 14px;
+  background:transparent;border:1.5px solid #FFCCCC;color:var(--red);padding:11px;
+  border-radius:11px;cursor:pointer;font-size:.78rem;font-family:'Poppins',sans-serif;
+  transition:all .2s;text-align:center;font-weight:600}
+.btn-logout:hover{background:#FFF0F0}
+.admin-hdr{background:linear-gradient(150deg,#1C3829,#2D5C3A);padding:52px 22px 26px}
+.btn-admin-back{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);
+  border:none;color:#fff;padding:8px 14px;border-radius:20px;cursor:pointer;
+  font-size:.75rem;font-family:'Poppins',sans-serif;margin-bottom:14px;transition:background .2s;width:fit-content}
+.btn-admin-back:hover{background:rgba(255,255,255,.2)}
+.btn-admin-back svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 14px 0}
+.admin-stat{background:var(--white);border-radius:13px;padding:14px 10px;text-align:center;
+  border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.admin-stat-n{font-size:1.4rem;font-weight:800;color:var(--dark);line-height:1}
+.admin-stat-l{font-size:.6rem;color:var(--muted);margin-top:4px;line-height:1.3}
+.admin-search{margin:14px 14px 0}
+.admin-search input{width:100%;background:var(--white);border:1.5px solid var(--border);
+  color:var(--dark);padding:11px 14px;border-radius:12px;font-size:.88rem;
+  font-family:'Poppins',sans-serif;transition:border-color .2s}
+.admin-search input:focus{outline:none;border-color:var(--green)}
+.admin-list{padding:14px}
+.admin-user-card{background:var(--white);border-radius:14px;padding:14px 16px;
+  margin-bottom:10px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.auc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.auc-avatar{width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--mid),var(--light));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:1rem;font-weight:700;color:#fff;text-transform:uppercase}
+.auc-info{flex:1;min-width:0}
+.auc-name{font-size:.88rem;font-weight:700;color:var(--dark)}
+.auc-email{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auc-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.auc-badge{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.auc-role-admin{background:#FFF0DC;color:#C87F30}
+.auc-role-user{background:var(--pale);color:var(--green)}
+.auc-blocked{background:#FFF0F0;color:var(--red)}
+.auc-active{background:var(--pale);color:var(--green)}
+.auc-inactive{background:var(--bg);color:var(--muted)}
+.auc-meta{font-size:.68rem;color:var(--muted);margin-bottom:10px;line-height:1.6}
+.auc-actions{display:flex;gap:7px}
+.btn-block{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);
+  padding:8px 10px;border-radius:9px;cursor:pointer;font-size:.72rem;font-weight:600;
+  font-family:'Poppins',sans-serif;transition:all .2s}
+.btn-block:hover{border-color:var(--red);color:var(--red);background:#FFF0F0}
+.btn-unblock{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);
+  padding:8px 10px;border-radius:9px;cursor:pointer;font-size:.72rem;font-weight:600;
+  font-family:'Poppins',sans-serif;transition:all .2s}
+.btn-unblock:hover{border-color:var(--green);color:var(--green);background:var(--pale)}
+.admin-empty{text-align:center;padding:32px 20px;color:var(--muted);font-size:.85rem}
+.admin-you-badge{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px;
+  background:#E8EAF6;color:#5C6BC0}
 </style>
 </head>
 <body>
@@ -544,6 +634,63 @@ canvas.chart{width:100%;border-radius:8px}
       <button class="btn-cancel" onclick="closeNameModal()">Cancelar</button>
       <button class="btn-save-m" onclick="saveUserName()">Salvar</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ AUTH OVERLAY ══ -->
+<div id="authOverlay">
+  <div class="auth-logo">
+    <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="10" r="4" fill="#8DC26A"/>
+      <path d="M20 14C14 18 14 24 14 24C14 27 16.5 29 20 29C23.5 29 26 27 26 24C26 24 26 18 20 14Z" fill="#5BA058"/>
+      <path d="M14 20C10 18 8 22 10 25C12 25 14 23 14 20Z" fill="#8DC26A"/>
+      <path d="M26 20C30 18 32 22 30 25C28 25 26 23 26 20Z" fill="#8DC26A"/>
+      <rect x="19" y="28" width="2" height="6" rx="1" fill="#3A7D44"/>
+    </svg>
+    <div class="auth-logo-text">health <em>lyfe</em></div>
+  </div>
+  <div class="auth-tagline">sua melhor versão, todos os dias.</div>
+
+  <!-- LOGIN -->
+  <div class="auth-card" id="authLogin">
+    <div class="auth-title">Entrar</div>
+    <div class="auth-sub">Acesse sua conta Health Lyfe</div>
+    <div class="auth-err" id="loginErr"></div>
+    <div class="auth-field">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <div class="auth-field">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-auth" onclick="doLogin()">Entrar</button>
+    <div class="auth-switch">Não tem conta? <a onclick="showAuthRegister()">Cadastrar-se</a></div>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="auth-card" id="authRegister" style="display:none">
+    <div class="auth-title">Criar conta</div>
+    <div class="auth-sub">Comece sua jornada de saúde hoje</div>
+    <div class="auth-err" id="registerErr"></div>
+    <div class="auth-field">
+      <label>Nome</label>
+      <input type="text" id="regName" placeholder="Seu nome completo"/>
+    </div>
+    <div class="auth-field">
+      <label>E-mail</label>
+      <input type="email" id="regEmail" placeholder="seu@email.com"/>
+    </div>
+    <div class="auth-field">
+      <label>Senha</label>
+      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres"/>
+    </div>
+    <div class="auth-field">
+      <label>Confirmar senha</label>
+      <input type="password" id="regPass2" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')doRegister()"/>
+    </div>
+    <button class="btn-auth" onclick="doRegister()">Criar conta</button>
+    <div class="auth-switch">Já tem conta? <a onclick="showAuthLogin()">Entrar</a></div>
   </div>
 </div>
 
@@ -758,6 +905,28 @@ canvas.chart{width:100%;border-radius:8px}
     <button class="btn-test-notif" onclick="testNotif()">Testar notificação agora</button>
   </div>
   <button class="btn-reset-day" onclick="confirmReset()">Reiniciar dia atual</button>
+  <button class="btn-admin-panel" id="btnAdminPanel" style="display:none" onclick="goPage('pg-admin')">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Painel Administrador
+  </button>
+  <button class="btn-logout" onclick="doLogout()">Sair da conta</button>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div class="page" id="pg-admin">
+  <div class="admin-hdr">
+    <button class="btn-admin-back" onclick="goPage('pg-perfil')">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+      Voltar ao Perfil
+    </button>
+    <div class="ph-title">Painel Admin</div>
+    <div class="ph-sub" id="adminSubTitle">Gerenciamento de usuários</div>
+  </div>
+  <div class="admin-stats" id="adminStats"></div>
+  <div class="admin-search">
+    <input type="text" id="adminSearchInput" placeholder="Pesquisar por nome ou e-mail…" oninput="renderAdminUsers()"/>
+  </div>
+  <div class="admin-list" id="adminList"></div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -915,10 +1084,64 @@ const BADGES_DEF=[
    ico:`<svg viewBox="0 0 24 24" fill="none" stroke="#3A7D44" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>`,bg:'#D6EBC5'},
 ];
 
+// ══ AUTH ══
+const AUTH={
+  USERS_KEY:'hl5_users',
+  SESSION_KEY:'hl5_session',
+  DATA_PFX:'hl5_data_',
+
+  getUsers(){try{return JSON.parse(localStorage.getItem(this.USERS_KEY)||'{}')}catch{return{}}},
+  saveUsers(u){localStorage.setItem(this.USERS_KEY,JSON.stringify(u))},
+  getSession(){try{return JSON.parse(localStorage.getItem(this.SESSION_KEY)||'null')}catch{return null}},
+  setSession(s){localStorage.setItem(this.SESSION_KEY,JSON.stringify(s))},
+  clearSession(){localStorage.removeItem(this.SESSION_KEY)},
+
+  hash(str){
+    let h=5381;
+    for(let i=0;i<str.length;i++){h=((h<<5)+h)+str.charCodeAt(i);h|=0;}
+    return(h>>>0).toString(36);
+  },
+
+  dataKey(){
+    const s=this.getSession();
+    return s?this.DATA_PFX+s.userId:'hl5_guest';
+  },
+
+  register(name,email,password){
+    const users=this.getUsers();
+    const em=email.toLowerCase().trim();
+    if(Object.values(users).find(u=>u.email===em))return{error:'E-mail já cadastrado'};
+    const id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,5);
+    const isFirst=Object.keys(users).length===0;
+    users[id]={id,name:name.trim(),email:em,password:this.hash(password),
+      role:isFirst?'admin':'user',createdAt:new Date().toISOString(),
+      lastActive:new Date().toISOString(),blocked:false};
+    this.saveUsers(users);
+    return{user:users[id]};
+  },
+
+  login(email,password){
+    const users=this.getUsers();
+    const em=email.toLowerCase().trim();
+    const user=Object.values(users).find(u=>u.email===em);
+    if(!user)return{error:'Usuário não encontrado'};
+    if(user.blocked)return{error:'Conta bloqueada. Contate o administrador.'};
+    if(user.password!==this.hash(password))return{error:'Senha incorreta'};
+    users[user.id].lastActive=new Date().toISOString();
+    this.saveUsers(users);
+    const session={userId:user.id,role:user.role,name:user.name};
+    this.setSession(session);
+    return{user,session};
+  },
+
+  logout(){this.clearSession();},
+  currentUser(){return this.getSession();}
+};
+
 // ══ STORE ══
 const S={
-  g(){try{return JSON.parse(localStorage.getItem('hl5')||'{}')}catch{return{}}},
-  s(d){localStorage.setItem('hl5',JSON.stringify(d))},
+  g(){try{return JSON.parse(localStorage.getItem(AUTH.dataKey())||'{}')}catch{return{}}},
+  s(d){localStorage.setItem(AUTH.dataKey(),JSON.stringify(d))},
   init(){
     let d=this.g();
     if(!d.times){d.times={};ALL.forEach(h=>d.times[h.id]=h.time)}
@@ -1233,6 +1456,7 @@ function render(){
   if(_page==='pg-grafico')renderChart(data);
   if(_page==='pg-progresso')renderProgress(data);
   if(_page==='pg-perfil')renderProfile(data);
+  if(_page==='pg-admin')renderAdminPanel();
 
   const nb=document.getElementById('notifBand');
   if(nb&&'Notification' in window&&Notification.permission==='default')nb.style.display='flex';
@@ -1652,6 +1876,9 @@ function renderProfile(data){
       </div>`;
     });
   }
+  // Show admin button only for admin role
+  const adminBtn=document.getElementById('btnAdminPanel');
+  if(adminBtn)adminBtn.style.display=(AUTH.currentUser()?.role==='admin')?'flex':'none';
 }
 
 function confirmReset(){
@@ -1772,6 +1999,169 @@ function showToast(msg){
   window._toast=setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+// ══ AUTH FUNCTIONS ══
+function showAuthLogin(){
+  document.getElementById('authLogin').style.display='';
+  document.getElementById('authRegister').style.display='none';
+  document.getElementById('loginErr').classList.remove('show');
+}
+function showAuthRegister(){
+  document.getElementById('authLogin').style.display='none';
+  document.getElementById('authRegister').style.display='';
+  document.getElementById('registerErr').classList.remove('show');
+}
+
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const errEl=document.getElementById('loginErr');
+  errEl.classList.remove('show');
+  if(!email||!pass){errEl.textContent='Preencha e-mail e senha.';errEl.classList.add('show');return;}
+  const r=AUTH.login(email,pass);
+  if(r.error){errEl.textContent=r.error;errEl.classList.add('show');return;}
+  migrateLegacyData();
+  enterApp();
+}
+
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const pass=document.getElementById('regPass').value;
+  const pass2=document.getElementById('regPass2').value;
+  const errEl=document.getElementById('registerErr');
+  errEl.classList.remove('show');
+  if(!name||!email||!pass){errEl.textContent='Preencha todos os campos.';errEl.classList.add('show');return;}
+  if(pass.length<6){errEl.textContent='Senha deve ter mínimo 6 caracteres.';errEl.classList.add('show');return;}
+  if(pass!==pass2){errEl.textContent='As senhas não coincidem.';errEl.classList.add('show');return;}
+  const r=AUTH.register(name,email,pass);
+  if(r.error){errEl.textContent=r.error;errEl.classList.add('show');return;}
+  // auto-login after register
+  AUTH.login(email,pass);
+  migrateLegacyData();
+  enterApp();
+  if(r.user.role==='admin')showToast('Conta admin criada! Bem-vindo, '+r.user.name+'!');
+  else showToast('Conta criada! Bem-vindo, '+r.user.name+'!');
+}
+
+function doLogout(){
+  if(!confirm('Deseja sair da sua conta?'))return;
+  AUTH.logout();
+  // clear any in-memory state
+  document.getElementById('authOverlay').classList.remove('hidden');
+  showAuthLogin();
+  document.getElementById('loginEmail').value='';
+  document.getElementById('loginPass').value='';
+  goPage('pg-inicio');
+}
+
+function migrateLegacyData(){
+  // Se existem dados no key antigo 'hl5' e a conta do usuário está vazia, migra
+  const legacy=localStorage.getItem('hl5');
+  if(!legacy)return;
+  const current=localStorage.getItem(AUTH.dataKey());
+  if(current&&current!=='{}'&&current!=='null')return;
+  localStorage.setItem(AUTH.dataKey(),legacy);
+  setTimeout(()=>showToast('Dados anteriores migrados com sucesso!'),500);
+}
+
+function enterApp(){
+  document.getElementById('authOverlay').classList.add('hidden');
+  const sess=AUTH.currentUser();
+  if(sess){
+    // Pre-fill userName from account name if not set
+    const d=S.init();
+    if(!d.userName&&sess.name){d.userName=sess.name;S.s(d);}
+  }
+  render();
+}
+
+function checkAuth(){
+  const sess=AUTH.getSession();
+  if(sess){
+    enterApp();
+  } else {
+    document.getElementById('authOverlay').classList.remove('hidden');
+    showAuthLogin();
+  }
+}
+
+// ══ ADMIN FUNCTIONS ══
+function renderAdminPanel(){
+  const users=AUTH.getUsers();
+  const all=Object.values(users);
+  const now=Date.now();
+  const sevenDays=7*24*3600*1000;
+  const active=all.filter(u=>!u.blocked&&(now-new Date(u.lastActive).getTime())<sevenDays).length;
+  const blocked=all.filter(u=>u.blocked).length;
+
+  const statsEl=document.getElementById('adminStats');
+  if(statsEl)statsEl.innerHTML=`
+    <div class="admin-stat"><div class="admin-stat-n">${all.length}</div><div class="admin-stat-l">Total de usuários</div></div>
+    <div class="admin-stat"><div class="admin-stat-n" style="color:var(--green)">${active}</div><div class="admin-stat-l">Ativos (7 dias)</div></div>
+    <div class="admin-stat"><div class="admin-stat-n" style="color:var(--red)">${blocked}</div><div class="admin-stat-l">Bloqueados</div></div>`;
+
+  const subEl=document.getElementById('adminSubTitle');
+  if(subEl)subEl.textContent=`${all.length} usuário${all.length!==1?'s':''} cadastrado${all.length!==1?'s':''}`;
+
+  renderAdminUsers();
+}
+
+function renderAdminUsers(){
+  const users=AUTH.getUsers();
+  const all=Object.values(users);
+  const q=(document.getElementById('adminSearchInput')?.value||'').toLowerCase().trim();
+  const sess=AUTH.currentUser();
+  const now=Date.now();
+  const sevenDays=7*24*3600*1000;
+
+  const filtered=q?all.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)):all;
+  filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  const listEl=document.getElementById('adminList');
+  if(!listEl)return;
+  if(filtered.length===0){listEl.innerHTML='<div class="admin-empty">Nenhum usuário encontrado</div>';return;}
+
+  listEl.innerHTML=filtered.map(u=>{
+    const isMe=u.id===sess?.userId;
+    const isActive=(now-new Date(u.lastActive).getTime())<sevenDays;
+    const created=new Date(u.createdAt).toLocaleDateString('pt-BR');
+    const lastSeen=new Date(u.lastActive).toLocaleDateString('pt-BR');
+    const initials=u.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    const canBlock=!isMe&&u.role!=='admin';
+    const blockBtn=canBlock?(u.blocked
+      ?`<button class="btn-unblock" onclick="toggleBlockUser('${u.id}',false)">Desbloquear</button>`
+      :`<button class="btn-block" onclick="toggleBlockUser('${u.id}',true)">Bloquear</button>`)
+      :'';
+    return`<div class="admin-user-card">
+      <div class="auc-top">
+        <div class="auc-avatar">${initials}</div>
+        <div class="auc-info">
+          <div class="auc-name">${u.name}</div>
+          <div class="auc-email">${u.email}</div>
+        </div>
+      </div>
+      <div class="auc-badges">
+        <span class="auc-badge ${u.role==='admin'?'auc-role-admin':'auc-role-user'}">${u.role==='admin'?'Admin':'Usuário'}</span>
+        ${u.blocked?'<span class="auc-badge auc-blocked">Bloqueado</span>':`<span class="auc-badge ${isActive?'auc-active':'auc-inactive'}">${isActive?'Ativo':'Inativo'}</span>`}
+        ${isMe?'<span class="auc-badge admin-you-badge">Você</span>':''}
+      </div>
+      <div class="auc-meta">Cadastro: ${created} · Último acesso: ${lastSeen}</div>
+      <div class="auc-actions">${blockBtn}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleBlockUser(userId,block){
+  const action=block?'bloquear':'desbloquear';
+  if(!confirm(`Deseja ${action} este usuário?`))return;
+  const users=AUTH.getUsers();
+  if(!users[userId])return;
+  users[userId].blocked=block;
+  AUTH.saveUsers(users);
+  showToast(block?'Usuário bloqueado':'Usuário desbloqueado');
+  renderAdminPanel();
+}
+
 // Fechar modais ao clicar fora
 document.addEventListener('click',e=>{
   if(e.target.id==='editModal')closeModal();
@@ -1785,7 +2175,7 @@ window.addEventListener('resize',()=>{if(_page==='pg-grafico')render()});
 
 document.addEventListener('DOMContentLoaded',async ()=>{
   await initSW();
-  render();
+  checkAuth();
   const data=S.g();
   if('Notification' in window&&Notification.permission==='granted')scheduleNotifs(data);
   const now=new Date(),mid=new Date(now);mid.setHours(24,0,0,0);
