@@ -391,6 +391,52 @@ canvas.chart{width:100%;border-radius:8px}
   font-family:'Poppins',sans-serif;width:100%;margin-top:12px;transition:all .2s}
 .btn-test-notif:hover{background:var(--green);color:#fff}
 
+/* ══ AREA TABS ══ */
+.area-tabs{display:flex;gap:7px;padding:14px 14px 0;position:sticky;top:0;
+  background:var(--bg);z-index:100;padding-top:12px;padding-bottom:2px}
+.area-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:10px 4px 9px;border-radius:13px;background:var(--white);
+  border:1.5px solid var(--border);cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.area-tab:active{transform:scale(.96)}
+.area-tab.active{box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.area-tab-ico{width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;transition:background .2s}
+.area-tab-ico svg{width:16px;height:16px}
+.area-tab-name{font-size:.6rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.4px;color:var(--muted);transition:color .2s}
+.area-tab.active .area-tab-name{font-weight:800}
+.area-tab-prog{font-size:.68rem;font-weight:700;color:var(--muted);
+  background:var(--bg);padding:1px 7px;border-radius:10px;
+  border:1px solid var(--border);transition:all .2s}
+
+/* AREA MOTIVATIONAL CARD */
+.area-motiv-card{margin:12px 14px 0;border-radius:16px;padding:18px 18px 16px;
+  position:relative;overflow:hidden}
+.area-motiv-card::before{content:'';position:absolute;right:-20px;bottom:-20px;
+  width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)}
+.area-motiv-emoji{font-size:1.6rem;margin-bottom:8px;display:block;
+  position:relative;z-index:1}
+.area-motiv-msg{font-size:.82rem;color:rgba(255,255,255,.9);line-height:1.65;
+  font-style:italic;position:relative;z-index:1}
+
+/* AREA PROGRESS CARD */
+.area-prog-card{margin:10px 14px 0;background:var(--white);border-radius:14px;
+  padding:15px 16px;border:1px solid var(--border);
+  box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.area-prog-head{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px}
+.area-prog-title{font-size:.68rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px}
+.area-prog-pct{font-size:1.15rem;font-weight:800}
+.area-prog-bar-wrap{height:9px;background:var(--bg);border-radius:5px;overflow:hidden;
+  border:1px solid var(--border)}
+.area-prog-bar-fill{height:100%;border-radius:5px;
+  transition:width .8s cubic-bezier(.4,0,.2,1)}
+.area-prog-sub{font-size:.7rem;color:var(--muted);margin-top:8px;
+  display:flex;align-items:center;justify-content:space-between}
+.area-prog-sub strong{font-weight:700}
+
 /* ADD HABIT BUTTON */
 .btn-add-habit{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
   background:transparent;border:1.5px dashed var(--border);color:var(--muted);
@@ -809,7 +855,8 @@ canvas.chart{width:100%;border-radius:8px}
     <div class="ph-title">Meus Hábitos</div>
     <div class="ph-sub" id="habSubtitle">Toque para marcar como concluído</div>
   </div>
-  <div style="padding:14px" id="areaBlocks"></div>
+  <div class="area-tabs" id="areaTabs"></div>
+  <div id="areaBlocks" style="padding-bottom:14px"></div>
 </div>
 
 <!-- ══ GRÁFICO ══ -->
@@ -1168,11 +1215,49 @@ function todayKey(){const d=new Date();return`${d.getFullYear()}-${d.getMonth()+
 function dBefore(n){const d=new Date();d.setDate(d.getDate()-n);return`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
 function hName(id,data){return(data.names||{})[id]||ALL.find(x=>x.id===id)?.name||(data.custom||[]).find(x=>x.id===id)?.name||id}
 
+// ══ MENSAGENS MOTIVACIONAIS POR ÁREA ══
+const AREA_MOTIVATIONS = {
+  corpo: [
+    {emoji:'💪', msg:'Seu corpo é o templo onde sua vida acontece. Cuide dele com amor e disciplina.'},
+    {emoji:'🏃', msg:'Cada gota de suor é um investimento no seu futuro. Continue se movendo!'},
+    {emoji:'💧', msg:'Hidratação e movimento são o combo perfeito para uma vida longa e cheia de energia.'},
+    {emoji:'🔥', msg:'O corpo que você tem hoje é o resultado das escolhas de ontem. O de amanhã depende de agora!'},
+    {emoji:'🌿', msg:'Movimento é vida. Cada passo conta, cada gole de água importa. Vá em frente!'},
+    {emoji:'⚡', msg:'Força não vem do que você consegue fazer — vem de superar o que você achava impossível.'},
+    {emoji:'🏆', msg:'Consistência bate intensidade. Mostre-se todos os dias e os resultados vão aparecer.'},
+  ],
+  mente: [
+    {emoji:'🧠', msg:'Uma mente bem cultivada é a maior riqueza que você pode ter. Nunca pare de aprender.'},
+    {emoji:'🧘', msg:'Minutos de meditação valem horas de paz. Respire, foque, conquiste o seu dia.'},
+    {emoji:'📚', msg:'Cada página lida, cada minuto estudado, te aproxima da sua melhor versão.'},
+    {emoji:'✨', msg:'O silêncio interno é onde as grandes ideias nascem. Reserve tempo para o equilíbrio.'},
+    {emoji:'🎯', msg:'Disciplina mental é a raiz de toda conquista. Cuide dos seus pensamentos com atenção.'},
+    {emoji:'🌱', msg:'Crescer mentalmente é um processo diário. Pequenos avanços somam grandes transformações.'},
+    {emoji:'💡', msg:'Mente focada, vida realizada. O que você alimenta mentalmente, você colhe na realidade.'},
+  ],
+  espiritualidade: [
+    {emoji:'🙏', msg:'A fé move montanhas. Cada oração é um passo mais perto de Deus e da sua paz interior.'},
+    {emoji:'✝️', msg:'"A tua palavra é lâmpada para os meus pés e luz para o meu caminho." — Salmos 119:105'},
+    {emoji:'⭐', msg:'Busca a Deus em primeiro lugar e tudo mais será acrescentado à tua vida.'},
+    {emoji:'🌅', msg:'Na oração, você não apenas fala com Deus — você se fortalece para os desafios do dia.'},
+    {emoji:'💫', msg:'Gratidão e fé são o combustível da alma. Renove sua força espiritual todos os dias.'},
+    {emoji:'🕊️', msg:'"Não nos cansemos de fazer o bem, pois a seu tempo ceifaremos, se não desanimarmos." — Gálatas 6:9'},
+    {emoji:'🌟', msg:'A paz que Deus dá transcende todo entendimento. Ore, confie e descanse nEle.'},
+  ]
+};
+
+function getDailyMotivation(areaId){
+  const msgs = AREA_MOTIVATIONS[areaId] || AREA_MOTIVATIONS.corpo;
+  const idx = (new Date().getDate() + new Date().getMonth()) % msgs.length;
+  return msgs[idx];
+}
+
 // ══ VERSE (random a cada carga) ══
 const _verse = VERSES[Math.floor(Math.random()*VERSES.length)];
 
 // ══ NAV ══
 let _page='pg-inicio';
+let _activeAreaTab='corpo';
 function goPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1543,136 +1628,209 @@ function renderHome(data,done,doneCount,total,pct){
   }
 }
 
+function switchAreaTab(areaId){
+  _activeAreaTab=areaId;
+  render();
+  // scroll habits content to top
+  const ab=document.getElementById('areaBlocks');
+  if(ab)ab.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 function renderHabits(data,done){
-  const ab=document.getElementById('areaBlocks');if(!ab)return;
-  ab.innerHTML='';
   const today=todayKey();
   const waterMl=(data.water[today]||0);
   const todayHabits=getTodayHabits(data);
-  const doneCount=todayHabits.filter(h=>!!done[h.id]).length;
+  const doneCount=todayHabits.filter(h=>h.id==='agua'?waterMl>=WATER_GOAL:!!done[h.id]).length;
   const sub=document.getElementById('habSubtitle');
   if(sub)sub.textContent=`${doneCount}/${todayHabits.length} hábitos para hoje`;
 
-  AREAS.forEach(area=>{
-    const ac=area.habits.filter(h=>done[h.id]).length;
-    const ap=Math.round(ac/area.habits.length*100);
-    const block=document.createElement('div');block.className='area-block';
-    block.innerHTML=`<div class="ab-hdr" style="background:${area.light}">
-      <div class="ab-ico" style="background:${area.bg}">${area.icon}</div>
-      <div class="ab-info">
-        <div class="ab-name" style="color:${area.color}">${area.name}</div>
-        <div class="ab-desc">${area.desc}</div>
-      </div>
-      <div class="ab-pct" style="color:${area.color}">${ap}%</div>
-    </div>`;
-
-    area.habits.forEach(h=>{
-      if(h.id==='agua'){
-        const wp=Math.min(100,Math.round(waterMl/WATER_GOAL*100));
-        const isDone=!!done.agua;
-        const wc=document.createElement('div');wc.className='water-card';
-        wc.innerHTML=`
-          <div class="wc-head">
-            <div class="wc-title">${h.icon} ${hName('agua',data)}</div>
-            <span class="wc-badge">${waterMl} / ${WATER_GOAL}ml</span>
-          </div>
-          <div class="wc-bar-wrap"><div class="wc-bar-fill" style="width:${wp}%"></div></div>
-          <div class="wc-hint">Meta mínima: <strong>2 litros</strong> por dia${isDone?' — ✓ meta atingida!':' — '+Math.max(0,WATER_GOAL-waterMl)+'ml restantes'}</div>
-          <div class="wc-row">
-            <input class="wc-input" type="number" id="wcInput" placeholder="Quantidade em ml" min="1"/>
-            <button class="btn-wadd" onclick="addWater()">+ Adicionar</button>
-            <button class="btn-wreset" onclick="resetWater()">Zerar</button>
-          </div>
-          <div class="wc-presets">
-            <span class="wcp" onclick="addWaterPreset(150)">150ml</span>
-            <span class="wcp" onclick="addWaterPreset(200)">200ml</span>
-            <span class="wcp" onclick="addWaterPreset(250)">250ml</span>
-            <span class="wcp" onclick="addWaterPreset(350)">350ml</span>
-            <span class="wcp" onclick="addWaterPreset(500)">500ml</span>
-            <span class="wcp" onclick="addWaterPreset(1000)">1L</span>
-          </div>
-          <div class="wc-edit" onclick="openEditModal('agua')">
-            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Editar nome e lembrete
-          </div>`;
-        block.appendChild(wc);return;
+  // ── RENDER TABS ──
+  const tabsEl=document.getElementById('areaTabs');
+  if(tabsEl){
+    tabsEl.innerHTML='';
+    AREAS.forEach(area=>{
+      // count for this area (all habits incl. custom, scheduled today)
+      const aHabits=[...area.habits,...getCustom(data).filter(c=>c.areaId===area.id)]
+        .filter(h=>isScheduledToday(h.id,data));
+      const aDone=aHabits.filter(h=>h.id==='agua'?waterMl>=WATER_GOAL:!!done[h.id]).length;
+      const isActive=_activeAreaTab===area.id;
+      const tab=document.createElement('div');
+      tab.className='area-tab'+(isActive?' active':'');
+      if(isActive){
+        tab.style.borderColor=area.color;
+        tab.style.background=area.light||area.bg;
       }
-
-      const isDone=!!done[h.id];
-      const isToday=isScheduledToday(h.id,data);
-      const streak=(data.stats.hs||{})[h.id]||0;
-      const time=data.times[h.id]||h.time;
-      const dur=(data.durs||{})[h.id]||h.dur;
-      const days=(data.daysPerWeek||{})[h.id]||'';
-      const sched=(data.schedule||{})[h.id]||[];
-      const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
-      const name=hName(h.id,data);
-      const row=document.createElement('div');
-      row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
-      row.innerHTML=`
-        <div class="hr-ico" style="background:${area.bg};color:${area.color}">${h.icon}</div>
-        <div class="hr-info">
-          <div class="hr-name">${name}</div>
-          <div class="hr-meta">
-            ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
-            <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
-            ${days?`<span class="hr-days">${days}x/sem</span>`:''}
-            ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
-            <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${h.id}')">
-              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar
-            </button>
-          </div>
+      tab.innerHTML=`
+        <div class="area-tab-ico" style="background:${isActive?area.bg:'var(--bg)'}">
+          ${area.icon.replace(/stroke="[^"]*"/g,`stroke="${isActive?area.color:'var(--muted)'}"`)}
         </div>
-        <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
-      row.addEventListener('click',()=>{if(isToday)toggleHabit(h.id);else showToast('Não agendado para hoje')});
-      block.appendChild(row);
+        <div class="area-tab-name" style="${isActive?`color:${area.color}`:''}">
+          ${area.name}
+        </div>
+        <div class="area-tab-prog" style="${isActive?`background:${area.bg};color:${area.color};border-color:${area.bg}`:''}">
+          ${aDone}/${aHabits.length}
+        </div>`;
+      tab.onclick=()=>switchAreaTab(area.id);
+      tabsEl.appendChild(tab);
     });
+  }
 
-    // Hábitos personalizados desta área
-    getCustom(data).filter(c=>c.areaId===area.id).forEach(c=>{
-      const isDone=!!done[c.id];
-      const isToday=isScheduledToday(c.id,data);
-      const streak=(data.stats.hs||{})[c.id]||0;
-      const time=(data.times||{})[c.id]||c.time;
-      const dur=(data.durs||{})[c.id]||c.dur;
-      const days=(data.daysPerWeek||{})[c.id]||c.daysPerWeek||'';
-      const sched=(data.schedule||{})[c.id]||[];
-      const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
-      const name=hName(c.id,data);
-      const row=document.createElement('div');
-      row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
-      row.innerHTML=`
-        <div class="hr-ico" style="background:${area.bg};color:${area.color}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+  // ── RENDER ACTIVE AREA CONTENT ──
+  const ab=document.getElementById('areaBlocks');if(!ab)return;
+  ab.innerHTML='';
+
+  const area=AREAS.find(a=>a.id===_activeAreaTab)||AREAS[0];
+
+  // 1. Motivational card
+  const motiv=getDailyMotivation(area.id);
+  const motivCard=document.createElement('div');
+  motivCard.className='area-motiv-card';
+  motivCard.style.background=`linear-gradient(135deg,${area.color} 0%,${area.color}CC 100%)`;
+  motivCard.innerHTML=`
+    <span class="area-motiv-emoji">${motiv.emoji}</span>
+    <div class="area-motiv-msg">${motiv.msg}</div>`;
+  ab.appendChild(motivCard);
+
+  // 2. Progress card
+  const aAllHabits=[...area.habits,...getCustom(data).filter(c=>c.areaId===area.id)];
+  const aTodayHabits=aAllHabits.filter(h=>isScheduledToday(h.id,data));
+  const aDoneCount=aTodayHabits.filter(h=>h.id==='agua'?waterMl>=WATER_GOAL:!!done[h.id]).length;
+  const aPct=aTodayHabits.length>0?Math.round(aDoneCount/aTodayHabits.length*100):0;
+  const progCard=document.createElement('div');
+  progCard.className='area-prog-card';
+  const progMsg=aPct===100?'✅ Área concluída! Incrível!':aPct>=50?'Mais da metade feita, continue!':'Vamos começar, você consegue!';
+  progCard.innerHTML=`
+    <div class="area-prog-head">
+      <div class="area-prog-title">Progresso — ${area.name}</div>
+      <div class="area-prog-pct" style="color:${area.color}">${aPct}%</div>
+    </div>
+    <div class="area-prog-bar-wrap">
+      <div class="area-prog-bar-fill" style="width:${aPct}%;background:linear-gradient(90deg,${area.color}99,${area.color})"></div>
+    </div>
+    <div class="area-prog-sub">
+      <span>${progMsg}</span>
+      <strong style="color:${area.color}">${aDoneCount}/${aTodayHabits.length} hábitos</strong>
+    </div>`;
+  ab.appendChild(progCard);
+
+  // 3. Habit rows — wrapper
+  const habWrap=document.createElement('div');
+  habWrap.style.cssText='padding:10px 14px 0';
+  ab.appendChild(habWrap);
+
+  // Render habits for this area
+  area.habits.forEach(h=>{
+    if(h.id==='agua'){
+      const wp=Math.min(100,Math.round(waterMl/WATER_GOAL*100));
+      const isDone=!!done.agua;
+      const wc=document.createElement('div');wc.className='water-card';
+      wc.style.marginBottom='7px';
+      wc.innerHTML=`
+        <div class="wc-head">
+          <div class="wc-title">${h.icon} ${hName('agua',data)}</div>
+          <span class="wc-badge">${waterMl} / ${WATER_GOAL}ml</span>
         </div>
-        <div class="hr-info">
-          <div class="hr-name">${name}</div>
-          <div class="hr-meta">
-            ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
-            <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
-            ${days?`<span class="hr-days">${days}x/sem</span>`:''}
-            ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
-            <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${c.id}')">
-              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Editar
-            </button>
-          </div>
+        <div class="wc-bar-wrap"><div class="wc-bar-fill" style="width:${wp}%"></div></div>
+        <div class="wc-hint">Meta mínima: <strong>2 litros</strong> por dia${isDone?' — ✓ meta atingida!':' — '+Math.max(0,WATER_GOAL-waterMl)+'ml restantes'}</div>
+        <div class="wc-row">
+          <input class="wc-input" type="number" id="wcInput" placeholder="Quantidade em ml" min="1"/>
+          <button class="btn-wadd" onclick="addWater()">+ Adicionar</button>
+          <button class="btn-wreset" onclick="resetWater()">Zerar</button>
         </div>
-        <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
-      row.addEventListener('click',()=>{if(isToday)toggleHabit(c.id);else showToast('Não agendado para hoje')});
-      block.appendChild(row);
-    });
-
-    // Botão adicionar hábito
-    const addBtn=document.createElement('button');
-    addBtn.className='btn-add-habit';
-    addBtn.innerHTML=`<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Adicionar hábito em ${area.name}`;
-    addBtn.onclick=()=>openAddHabitModal(area.id);
-    block.appendChild(addBtn);
-
-    ab.appendChild(block);
+        <div class="wc-presets">
+          <span class="wcp" onclick="addWaterPreset(150)">150ml</span>
+          <span class="wcp" onclick="addWaterPreset(200)">200ml</span>
+          <span class="wcp" onclick="addWaterPreset(250)">250ml</span>
+          <span class="wcp" onclick="addWaterPreset(350)">350ml</span>
+          <span class="wcp" onclick="addWaterPreset(500)">500ml</span>
+          <span class="wcp" onclick="addWaterPreset(1000)">1L</span>
+        </div>
+        <div class="wc-edit" onclick="openEditModal('agua')">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar nome e lembrete
+        </div>`;
+      habWrap.appendChild(wc);return;
+    }
+    habWrap.appendChild(_buildHabitRow(h,area,data,done));
   });
+
+  // Custom habits for this area
+  getCustom(data).filter(c=>c.areaId===area.id).forEach(c=>{
+    habWrap.appendChild(_buildCustomHabitRow(c,area,data,done));
+  });
+
+  // Add habit button
+  const addBtn=document.createElement('button');
+  addBtn.className='btn-add-habit';
+  addBtn.innerHTML=`<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Adicionar hábito em ${area.name}`;
+  addBtn.onclick=()=>openAddHabitModal(area.id);
+  habWrap.appendChild(addBtn);
+}
+
+function _buildHabitRow(h,area,data,done){
+  const isDone=!!done[h.id];
+  const isToday=isScheduledToday(h.id,data);
+  const streak=(data.stats.hs||{})[h.id]||0;
+  const time=data.times[h.id]||h.time;
+  const dur=(data.durs||{})[h.id]||h.dur;
+  const days=(data.daysPerWeek||{})[h.id]||'';
+  const sched=(data.schedule||{})[h.id]||[];
+  const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
+  const name=hName(h.id,data);
+  const row=document.createElement('div');
+  row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
+  row.innerHTML=`
+    <div class="hr-ico" style="background:${area.bg};color:${area.color}">${h.icon}</div>
+    <div class="hr-info">
+      <div class="hr-name">${name}</div>
+      <div class="hr-meta">
+        ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
+        <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
+        ${days?`<span class="hr-days">${days}x/sem</span>`:''}
+        ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
+        <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${h.id}')">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </button>
+      </div>
+    </div>
+    <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
+  row.addEventListener('click',()=>{if(isToday)toggleHabit(h.id);else showToast('Não agendado para hoje')});
+  return row;
+}
+
+function _buildCustomHabitRow(c,area,data,done){
+  const isDone=!!done[c.id];
+  const isToday=isScheduledToday(c.id,data);
+  const streak=(data.stats.hs||{})[c.id]||0;
+  const time=(data.times||{})[c.id]||c.time;
+  const dur=(data.durs||{})[c.id]||c.dur;
+  const days=(data.daysPerWeek||{})[c.id]||c.daysPerWeek||'';
+  const sched=(data.schedule||{})[c.id]||[];
+  const schedLabel=sched.length>0?sched.map(i=>DOW_NAMES[i]).join(' · '):'';
+  const name=hName(c.id,data);
+  const row=document.createElement('div');
+  row.className='habit-row'+(isDone?' done':'')+((!isToday&&!isDone)?' off-day':'');
+  row.innerHTML=`
+    <div class="hr-ico" style="background:${area.bg};color:${area.color}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </div>
+    <div class="hr-info">
+      <div class="hr-name">${name}</div>
+      <div class="hr-meta">
+        ${streak>0?`<span class="hr-streak">🔥 ${streak} dias</span>`:''}
+        <span class="hr-time-lbl">⏰ ${time}${dur?' · '+dur+'min':''}</span>
+        ${days?`<span class="hr-days">${days}x/sem</span>`:''}
+        ${schedLabel?`<span class="hr-sched">${schedLabel}</span>`:''}
+        <button class="btn-edit-h" onclick="event.stopPropagation();openEditModal('${c.id}')">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </button>
+      </div>
+    </div>
+    <div class="hr-ck">${isDone?'✓':(!isToday?'–':'')}</div>`;
+  row.addEventListener('click',()=>{if(isToday)toggleHabit(c.id);else showToast('Não agendado para hoje')});
+  return row;
 }
 
 // ══ CANVAS CHARTS ══
