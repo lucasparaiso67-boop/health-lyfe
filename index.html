@@ -392,23 +392,55 @@ canvas.chart{width:100%;border-radius:8px}
 .btn-test-notif:hover{background:var(--green);color:#fff}
 
 /* ══ AREA TABS ══ */
-.area-tabs{display:flex;gap:7px;padding:14px 14px 0;position:sticky;top:0;
-  background:var(--bg);z-index:100;padding-top:12px;padding-bottom:2px}
-.area-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
-  padding:10px 4px 9px;border-radius:13px;background:var(--white);
+.area-tabs{display:flex;gap:7px;padding:12px 14px 2px;
+  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
+  position:sticky;top:0;background:var(--bg);z-index:100}
+.area-tabs::-webkit-scrollbar{display:none}
+.area-tab{flex:0 0 auto;min-width:72px;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:10px 8px 9px;border-radius:13px;background:var(--white);
   border:1.5px solid var(--border);cursor:pointer;transition:all .2s;
   box-shadow:0 2px 6px rgba(0,0,0,.04)}
 .area-tab:active{transform:scale(.96)}
 .area-tab.active{box-shadow:0 4px 14px rgba(0,0,0,.1)}
-.area-tab-ico{width:32px;height:32px;border-radius:9px;
+.area-tab-ico{width:32px;height:32px;border-radius:9px;font-size:1.1rem;
   display:flex;align-items:center;justify-content:center;transition:background .2s}
 .area-tab-ico svg{width:16px;height:16px}
-.area-tab-name{font-size:.6rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.4px;color:var(--muted);transition:color .2s}
+.area-tab-name{font-size:.58rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.3px;color:var(--muted);transition:color .2s;text-align:center;
+  max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .area-tab.active .area-tab-name{font-weight:800}
-.area-tab-prog{font-size:.68rem;font-weight:700;color:var(--muted);
-  background:var(--bg);padding:1px 7px;border-radius:10px;
+.area-tab-prog{font-size:.65rem;font-weight:700;color:var(--muted);
+  background:var(--bg);padding:1px 6px;border-radius:10px;
   border:1px solid var(--border);transition:all .2s}
+.area-tab-add{flex:0 0 auto;min-width:46px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  padding:10px 8px;border-radius:13px;background:var(--white);
+  border:1.5px dashed var(--border);cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 6px rgba(0,0,0,.03);color:var(--muted)}
+.area-tab-add:hover{border-color:var(--green);color:var(--green);background:var(--pale)}
+.area-tab-add svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.area-tab-add span{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+
+/* EMOJI PICKER */
+.emoji-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.emoji-opt{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:1.2rem;cursor:pointer;background:var(--bg);
+  border:1.5px solid var(--border);transition:all .15s;flex-shrink:0}
+.emoji-opt.sel,.emoji-opt:hover{background:var(--pale);border-color:var(--green);transform:scale(1.1)}
+
+/* COLOR SWATCHES */
+.color-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.cswatch{width:32px;height:32px;border-radius:50%;cursor:pointer;
+  border:3px solid transparent;transition:all .15s;flex-shrink:0}
+.cswatch.sel{border-color:var(--dark);transform:scale(1.15)}
+
+/* CUSTOM AREA MANAGE */
+.btn-manage-area{display:inline-flex;align-items:center;gap:5px;margin-left:auto;
+  font-size:.65rem;color:var(--muted);background:var(--bg);
+  border:1px solid var(--border);padding:3px 9px;border-radius:7px;
+  cursor:pointer;font-family:'Poppins',sans-serif;transition:all .15s;flex-shrink:0}
+.btn-manage-area:hover{border-color:var(--green);color:var(--green)}
+.btn-manage-area svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2}
 
 /* AREA MOTIVATIONAL CARD */
 .area-motiv-card{margin:12px 14px 0;border-radius:16px;padding:18px 18px 16px;
@@ -664,6 +696,31 @@ canvas.chart{width:100%;border-radius:8px}
       <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
       <button class="btn-save-m" onclick="saveNewHabit()">Adicionar</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL NOVA ÁREA CUSTOMIZADA -->
+<div class="modal-overlay" id="addAreaModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="addAreaTitle">Nova Área</div>
+    <div class="mf">
+      <label>Nome da área</label>
+      <input type="text" id="areaNameInput" placeholder="Ex: Finanças, Família, Carreira…" maxlength="20"/>
+    </div>
+    <div class="mf">
+      <label>Ícone</label>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+    <div class="mf">
+      <label>Cor</label>
+      <div class="color-swatches" id="colorSwatches"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAddAreaModal()">Cancelar</button>
+      <button class="btn-save-m" onclick="saveArea()">Salvar área</button>
+    </div>
+    <button class="btn-delete-habit" id="deleteAreaBtn" style="display:none;margin-top:8px" onclick="deleteCustomArea()">Excluir esta área</button>
   </div>
 </div>
 
@@ -1207,6 +1264,7 @@ const S={
     if(!d.notif)d.notif={habits:false,water:false,motivational:false,waterInterval:60};
     if(!d.hidden)d.hidden=[];
     if(d.avatar===undefined)d.avatar=null;
+    if(!d.customAreas)d.customAreas=[];
     this.s(d);return d;
   }
 };
@@ -1246,10 +1304,120 @@ const AREA_MOTIVATIONS = {
   ]
 };
 
+const GENERIC_MOTIVATIONS=[
+  {emoji:'🎯',msg:'Foco e consistência são a chave para qualquer conquista. Continue firme!'},
+  {emoji:'🚀',msg:'Cada pequeno passo te aproxima do seu grande objetivo. Não desista!'},
+  {emoji:'💡',msg:'O sucesso é a soma de pequenos esforços repetidos dia após dia. Você está no caminho!'},
+  {emoji:'🌱',msg:'Crescimento é um processo diário. Celebre cada avanço, por menor que seja.'},
+  {emoji:'⚡',msg:'Disciplina hoje é liberdade amanhã. Mantenha o foco nos seus objetivos!'},
+  {emoji:'🏆',msg:'Grandes resultados começam com pequenas ações consistentes. Continue!'},
+  {emoji:'🌟',msg:'Você tem o poder de criar a vida que deseja. Um hábito de cada vez.'},
+];
+
+const AREA_EMOJIS=['💰','👨‍👩‍👧','💼','🎓','🎨','🎵','✈️','🏠','🤝','📊','💻','🛒','📝','🌍','❤️','😊','🍎','🎮','📸','🏋️','🧩','🔧','📱','🎯','🌺','☕','🚗','📖','🎭','🦋'];
+
+const AREA_COLORS=[
+  {color:'#B8843A',bg:'#FFF0DC',label:'Âmbar'},
+  {color:'#C04455',bg:'#FFF0F0',label:'Vermelho'},
+  {color:'#1A7FBD',bg:'#EBF5FC',label:'Azul'},
+  {color:'#0B8A8A',bg:'#E0F5F5',label:'Ciano'},
+  {color:'#5C6BC0',bg:'#E8EAF6',label:'Índigo'},
+  {color:'#7B4FA0',bg:'#F0EAF8',label:'Roxo'},
+  {color:'#3A7D44',bg:'#D6EBC5',label:'Verde'},
+  {color:'#C0784A',bg:'#FEF0E7',label:'Laranja'},
+  {color:'#2C7873',bg:'#E0F2F1',label:'Esmeralda'},
+  {color:'#8E44AD',bg:'#F5EEF8',label:'Violeta'},
+];
+
+let _editingAreaId=null;
+let _selEmoji='💰';
+let _selColor=AREA_COLORS[0];
+
+function getCustomAreas(data){return data.customAreas||[];}
+function getAllAreas(data){return[...AREAS,...getCustomAreas(data)];}
+
 function getDailyMotivation(areaId){
-  const msgs = AREA_MOTIVATIONS[areaId] || AREA_MOTIVATIONS.corpo;
-  const idx = (new Date().getDate() + new Date().getMonth()) % msgs.length;
-  return msgs[idx];
+  if(AREA_MOTIVATIONS[areaId]){
+    const msgs=AREA_MOTIVATIONS[areaId];
+    return msgs[(new Date().getDate()+new Date().getMonth())%msgs.length];
+  }
+  // custom area — use generic
+  const msgs=GENERIC_MOTIVATIONS;
+  // vary by areaId hash so different custom areas get different messages
+  let h=0;for(let i=0;i<areaId.length;i++)h=(h*31+areaId.charCodeAt(i))|0;
+  return msgs[Math.abs(h+new Date().getDate())%msgs.length];
+}
+
+function openAddAreaModal(editId){
+  _editingAreaId=editId||null;
+  const data=S.init();
+  const existing=editId?getCustomAreas(data).find(a=>a.id===editId):null;
+
+  document.getElementById('addAreaTitle').textContent=existing?`Editar — ${existing.name}`:'Nova Área';
+  document.getElementById('areaNameInput').value=existing?existing.name:'';
+  document.getElementById('deleteAreaBtn').style.display=existing?'block':'none';
+
+  _selEmoji=existing?existing.emoji:AREA_EMOJIS[0];
+  _selColor=existing?AREA_COLORS.find(c=>c.color===existing.color)||AREA_COLORS[0]:AREA_COLORS[0];
+
+  // render emoji grid
+  const eg=document.getElementById('emojiGrid');
+  eg.innerHTML=AREA_EMOJIS.map(e=>`<div class="emoji-opt${e===_selEmoji?' sel':''}" onclick="pickEmoji(this,'${e}')">${e}</div>`).join('');
+
+  // render color swatches
+  const cs=document.getElementById('colorSwatches');
+  cs.innerHTML=AREA_COLORS.map((c,i)=>
+    `<div class="cswatch${c.color===_selColor.color?' sel':''}" style="background:${c.color}"
+      onclick="pickColor(this,${i})" title="${c.label}"></div>`
+  ).join('');
+
+  document.getElementById('addAreaModal').classList.add('open');
+  setTimeout(()=>document.getElementById('areaNameInput')?.focus(),300);
+}
+
+function closeAddAreaModal(){
+  document.getElementById('addAreaModal').classList.remove('open');
+  _editingAreaId=null;
+}
+
+function pickEmoji(el,emoji){
+  _selEmoji=emoji;
+  document.querySelectorAll('#emojiGrid .emoji-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function pickColor(el,idx){
+  _selColor=AREA_COLORS[idx];
+  document.querySelectorAll('#colorSwatches .cswatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function saveArea(){
+  const name=document.getElementById('areaNameInput').value.trim();
+  if(!name)return showToast('Digite o nome da área');
+  const data=S.init();
+  if(_editingAreaId){
+    const area=data.customAreas.find(a=>a.id===_editingAreaId);
+    if(area){area.name=name;area.emoji=_selEmoji;area.color=_selColor.color;area.bg=_selColor.bg;}
+  }else{
+    const id='ca_'+Date.now();
+    data.customAreas.push({id,name,emoji:_selEmoji,color:_selColor.color,bg:_selColor.bg});
+    _activeAreaTab=id;
+  }
+  S.s(data);closeAddAreaModal();showToast(_editingAreaId?'Área atualizada!':'Área "'+name+'" criada!');render();
+}
+
+function deleteCustomArea(){
+  if(!_editingAreaId)return;
+  if(!confirm('Excluir esta área e todos os hábitos dela?'))return;
+  const data=S.init();
+  const area=data.customAreas.find(a=>a.id===_editingAreaId);
+  if(!area)return;
+  // remove associated custom habits
+  data.custom=(data.custom||[]).filter(h=>h.areaId!==_editingAreaId);
+  data.customAreas=data.customAreas.filter(a=>a.id!==_editingAreaId);
+  if(_activeAreaTab===_editingAreaId)_activeAreaTab='corpo';
+  S.s(data);closeAddAreaModal();showToast('Área excluída');render();
 }
 
 // ══ VERSE (random a cada carga) ══
@@ -1403,8 +1571,17 @@ function renderAvatarImg(src){
 }
 
 function openAddHabitModal(areaId){
+  const data=S.init();
   const sel=document.getElementById('ahArea');
-  if(sel)sel.value=areaId||'corpo';
+  if(sel){
+    // rebuild options including custom areas
+    sel.innerHTML=`
+      <option value="corpo">Corpo</option>
+      <option value="mente">Mente</option>
+      <option value="espiritualidade">Espiritualidade</option>
+      ${getCustomAreas(data).map(a=>`<option value="${a.id}">${a.emoji} ${a.name}</option>`).join('')}`;
+    sel.value=areaId||'corpo';
+  }
   document.getElementById('ahName').value='';
   document.getElementById('ahDur').value='30';
   document.getElementById('ahDays').value='3';
@@ -1648,68 +1825,85 @@ function renderHabits(data,done){
   const tabsEl=document.getElementById('areaTabs');
   if(tabsEl){
     tabsEl.innerHTML='';
-    AREAS.forEach(area=>{
-      // count for this area (all habits incl. custom, scheduled today)
-      const aHabits=[...area.habits,...getCustom(data).filter(c=>c.areaId===area.id)]
+    const allAreas=getAllAreas(data);
+    allAreas.forEach(area=>{
+      const aHabits=[...(area.habits||[]),...getCustom(data).filter(c=>c.areaId===area.id)]
         .filter(h=>isScheduledToday(h.id,data));
       const aDone=aHabits.filter(h=>h.id==='agua'?waterMl>=WATER_GOAL:!!done[h.id]).length;
       const isActive=_activeAreaTab===area.id;
+      const isCustomArea=!AREAS.find(a=>a.id===area.id);
       const tab=document.createElement('div');
       tab.className='area-tab'+(isActive?' active':'');
-      if(isActive){
-        tab.style.borderColor=area.color;
-        tab.style.background=area.light||area.bg;
-      }
-      tab.innerHTML=`
-        <div class="area-tab-ico" style="background:${isActive?area.bg:'var(--bg)'}">
-          ${area.icon.replace(/stroke="[^"]*"/g,`stroke="${isActive?area.color:'var(--muted)'}"`)}
-        </div>
-        <div class="area-tab-name" style="${isActive?`color:${area.color}`:''}">
-          ${area.name}
-        </div>
+      if(isActive){tab.style.borderColor=area.color;tab.style.background=area.bg||area.light;}
+      const icoContent=isCustomArea
+        ?`<div class="area-tab-ico" style="background:${isActive?area.bg:'var(--bg)'}">${area.emoji}</div>`
+        :`<div class="area-tab-ico" style="background:${isActive?area.bg:'var(--bg)'}">
+            ${area.icon.replace(/stroke="[^"]*"/g,`stroke="${isActive?area.color:'var(--muted)'}"`)}
+          </div>`;
+      tab.innerHTML=`${icoContent}
+        <div class="area-tab-name" style="${isActive?`color:${area.color}`:''}"> ${area.name}</div>
         <div class="area-tab-prog" style="${isActive?`background:${area.bg};color:${area.color};border-color:${area.bg}`:''}">
           ${aDone}/${aHabits.length}
         </div>`;
       tab.onclick=()=>switchAreaTab(area.id);
       tabsEl.appendChild(tab);
     });
+    // "+" button to add new area
+    const addTab=document.createElement('div');
+    addTab.className='area-tab-add';
+    addTab.title='Criar nova área';
+    addTab.innerHTML=`<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Nova</span>`;
+    addTab.onclick=()=>openAddAreaModal(null);
+    tabsEl.appendChild(addTab);
   }
 
   // ── RENDER ACTIVE AREA CONTENT ──
   const ab=document.getElementById('areaBlocks');if(!ab)return;
   ab.innerHTML='';
 
-  const area=AREAS.find(a=>a.id===_activeAreaTab)||AREAS[0];
+  const allAreas=getAllAreas(data);
+  const area=allAreas.find(a=>a.id===_activeAreaTab)||AREAS[0];
+  const isCustomArea=!AREAS.find(a=>a.id===area.id);
 
   // 1. Motivational card
   const motiv=getDailyMotivation(area.id);
   const motivCard=document.createElement('div');
   motivCard.className='area-motiv-card';
   motivCard.style.background=`linear-gradient(135deg,${area.color} 0%,${area.color}CC 100%)`;
+  let motivExtra='';
+  if(isCustomArea){
+    motivExtra=`<button onclick="openAddAreaModal('${area.id}')" style="margin-top:12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:8px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:5px">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Editar área</button>`;
+  }
   motivCard.innerHTML=`
-    <span class="area-motiv-emoji">${motiv.emoji}</span>
-    <div class="area-motiv-msg">${motiv.msg}</div>`;
+    <span class="area-motiv-emoji">${isCustomArea?area.emoji:motiv.emoji}</span>
+    <div class="area-motiv-msg">${motiv.msg}</div>
+    ${motivExtra}`;
   ab.appendChild(motivCard);
 
   // 2. Progress card
-  const aAllHabits=[...area.habits,...getCustom(data).filter(c=>c.areaId===area.id)];
+  const aDefaultHabits=area.habits||[];
+  const aAllHabits=[...aDefaultHabits,...getCustom(data).filter(c=>c.areaId===area.id)];
   const aTodayHabits=aAllHabits.filter(h=>isScheduledToday(h.id,data));
   const aDoneCount=aTodayHabits.filter(h=>h.id==='agua'?waterMl>=WATER_GOAL:!!done[h.id]).length;
   const aPct=aTodayHabits.length>0?Math.round(aDoneCount/aTodayHabits.length*100):0;
   const progCard=document.createElement('div');
   progCard.className='area-prog-card';
-  const progMsg=aPct===100?'✅ Área concluída! Incrível!':aPct>=50?'Mais da metade feita, continue!':'Vamos começar, você consegue!';
+  const progMsg=aTodayHabits.length===0?'Adicione hábitos a esta área abaixo':
+    aPct===100?'✅ Área concluída! Incrível!':
+    aPct>=50?'Mais da metade feita, continue!':'Vamos começar, você consegue!';
   progCard.innerHTML=`
     <div class="area-prog-head">
       <div class="area-prog-title">Progresso — ${area.name}</div>
-      <div class="area-prog-pct" style="color:${area.color}">${aPct}%</div>
+      <div class="area-prog-pct" style="color:${area.color}">${aTodayHabits.length===0?'—':aPct+'%'}</div>
     </div>
     <div class="area-prog-bar-wrap">
       <div class="area-prog-bar-fill" style="width:${aPct}%;background:linear-gradient(90deg,${area.color}99,${area.color})"></div>
     </div>
     <div class="area-prog-sub">
       <span>${progMsg}</span>
-      <strong style="color:${area.color}">${aDoneCount}/${aTodayHabits.length} hábitos</strong>
+      ${aTodayHabits.length>0?`<strong style="color:${area.color}">${aDoneCount}/${aTodayHabits.length} hábitos</strong>`:''}
     </div>`;
   ab.appendChild(progCard);
 
@@ -1718,8 +1912,8 @@ function renderHabits(data,done){
   habWrap.style.cssText='padding:10px 14px 0';
   ab.appendChild(habWrap);
 
-  // Render habits for this area
-  area.habits.forEach(h=>{
+  // Render default habits for this area (only built-in areas have these)
+  (area.habits||[]).forEach(h=>{
     if(h.id==='agua'){
       const wp=Math.min(100,Math.round(waterMl/WATER_GOAL*100));
       const isDone=!!done.agua;
@@ -2326,6 +2520,7 @@ document.addEventListener('click',e=>{
   if(e.target.id==='nameModal')closeNameModal();
   if(e.target.id==='addHabitModal')closeAddModal();
   if(e.target.id==='alertModal')closeAlertModal();
+  if(e.target.id==='addAreaModal')closeAddAreaModal();
 });
 
 // Redraw charts on resize
